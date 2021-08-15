@@ -104,6 +104,7 @@ if(address>257):
 
 
 for i in range (0,len(a)): 
+
     def registers(k): # This function returns a list of binary numbers accordance to the registers used.Takes one parameter.
         reg =[]
         var = k
@@ -158,6 +159,7 @@ for i in range (0,len(a)):
             x=opc.get(word)
 
         return x
+        
     def typeA(g): # This function is made exclusively for creating a type A machine code.
 
         if a[i][0][-1]==':':
@@ -224,8 +226,6 @@ for i in range (0,len(a)):
         add1 ='{0:08b}'.format(li)
         
         code = z+y[0]+ str(add1)
-
-        
         print(code)
         
         
@@ -236,11 +236,8 @@ for i in range (0,len(a)):
 
         x=label(a)
         code=z+"000"+x.get(q[1])
-        
         print(code)
     
-
-
     def typeF(n): # This function is made exclusively for creating a type F machine code.
         if a[i][0][-1]==':':
             z=opcode(n[1])
@@ -270,6 +267,9 @@ for i in range (0,len(a)):
         typeE(a[i])
     if a[i][0]=='hlt':
         typeF(a[i])
+        
+#below if-else statement is used to call function in which label is read first.
+
     if a[i][0][-1]==':':
         if a[i][1]=='add' or a[i][1]=='sub' or a[i][1]=='mul':
             typeA(a[i]) 
