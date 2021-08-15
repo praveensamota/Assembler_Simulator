@@ -3,13 +3,13 @@ from sys import stdin
 a=[]
 linenum=0
 temp_var=[]
-dict_var={} 
+dict_var={} #dict_var is a dictionary which takes key as variable names and value as addresses of variable.
 address=0
 halt=False
 endvar=False
-kw = ['add','sub','mul','xor','or','and','rs','ls','mov','div','not','cmp','ld','st','jmp','jlt','jgt','je','hlt']
+kw = ['add','sub','mul','xor','or','and','rs','ls','mov','div','not','cmp','ld','st','jmp','jlt','jgt','je','hlt'] #list of keywords we've to use in the program accordingly
 
-lable_dict ={}
+lable_dict ={} #label_dic is a dictionary which takes key as lable names and value as addresses of lable.
 
     
 
@@ -21,7 +21,7 @@ for line in stdin:
     stripped_line=line.strip()
     line_list=stripped_line.split()
     a.append(line_list)
-    def label(o):
+    def label(o): # This function is a global function and is used to fetch the label and their addresses.
         
         for i in range(0,len(o)):
             if o[0][0]=='var':
@@ -104,7 +104,7 @@ if(address>257):
 
 
 for i in range (0,len(a)): 
-    def registers(k):
+    def registers(k): # This function returns a list of binary numbers accordance to the registers used.Takes one parameter.
         reg =[]
         var = k
         for j in range(1,len(a[i])):
@@ -126,7 +126,7 @@ for i in range (0,len(a)):
                 reg.append("111")
         return reg
 
-    def opcode(word):
+    def opcode(word):  # This is a kind of helper function which has a opcode dictionary embedded in it with key as the parameter word and value as opcode.Takes only one parameter.
         opc={"add":"00000",
              "sub":"00001",
              "mov":tuple(["00010","00011"]),
@@ -158,7 +158,7 @@ for i in range (0,len(a)):
             x=opc.get(word)
 
         return x
-    def typeA(g):
+    def typeA(g): # This function is made exclusively for creating a type A machine code.
 
         if a[i][0][-1]==':':
             if((g[2][0]=='R' and g[3][0]=='R' and g[4][0]=='R')==0):
@@ -183,7 +183,7 @@ for i in range (0,len(a)):
  
     
     
-    def typeB(t):
+    def typeB(t):  # This function is made exclusively for creating a type B machine code.
         if((t[1][0]=='R' and t[1][1].isdecimal() and t[2][0]=='$' and t[2][1:].isdecimal())==0):
             print("Invalid Syntax: Type B can't be interpreted in this way")
             quit()
@@ -200,7 +200,7 @@ for i in range (0,len(a)):
         code=z+y[0]+str(imm)
         print(code)
    
-    def typeC(m):
+    def typeC(m):  # This function is made exclusively for creating a type C machine code.
         if(m[1][0]=='R' and m[1][1].isdecimal() and ((m[2][0]=='R' and m[2][1].isdecimal())  or m[2]=='FLAGS')==0):
            print("Invalid Syntax: Type C can't be interpreted in this way")
            quit()
@@ -209,7 +209,7 @@ for i in range (0,len(a)):
         code=z+'00000'+y[0]+y[1]
         print(code)
     
-    def typeD(p):
+    def typeD(p):  # This function is made exclusively for creating a type D machine code.
         if((p[1][0]=='R' and p[1][1].isdecimal())==0):
             print("Invalid Syntax: Type D can't be interpreted in this way")
             quit()
@@ -230,7 +230,7 @@ for i in range (0,len(a)):
         
         
 
-    def typeE(q):
+    def typeE(q):  # This function is made exclusively for creating a type E machine code.
         if q[0]=='jmp' or q[0]=='jlt' or q[0]=='jgt' or q[0]=='je':
             z=opcode(q[0])
 
@@ -241,7 +241,7 @@ for i in range (0,len(a)):
     
 
 
-    def typeF(n):
+    def typeF(n): # This function is made exclusively for creating a type F machine code.
         if a[i][0][-1]==':':
             z=opcode(n[1])
         else:
@@ -250,7 +250,7 @@ for i in range (0,len(a)):
         print(code)
     
 
-
+#below if-else statements are used to call the respective fuctions accordingly 
 
     if a[i][0]=='add' or a[i][0]=='sub' or a[i][0]=='mul' or a[i][0]=='xor' or a[i][0]=='or' or a[i][0]=='and':
         typeA(a[i])
@@ -277,5 +277,3 @@ for i in range (0,len(a)):
             typeC(a[i])
         if a[i][1]=='hlt':
             typeF(a[i])
-    if a[i][0]=='var':
-        continue
