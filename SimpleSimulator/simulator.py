@@ -3,12 +3,12 @@ from sys import stdin
 import matplotlib.pyplot as plt
 
 
-a=[]
-
-
+a=[]           # empty list.
 dict_var={}    # for store purposes key = mem address value = register
-address=0
+address=0      # itialize address.
 
+  #opc is a dictionary that has opcode as opcode as key and instructions as value.
+  
 opc ={
         "00000": "add",
         "00001": "sub",
@@ -31,8 +31,10 @@ opc ={
         "10010": "je",
         "10011": "hlt",
     }
-
-opctype = {
+    
+ # opctype is a dictionary that has opcode as key and types as value.
+ 
+opctype = {                          
     "00000": "A",
     "00001": "A",
     "00110": "A",
@@ -53,9 +55,11 @@ opctype = {
     "10001": "E",
     "10010": "E",
     "10011": "F"}
+    
+ # opctype is a dictionary that has opcode as key and types as value.
  
 Store_reg = {
-    "000": "0",    # Store_reg[a]=Store_var[mem_addr]
+    "000": "0",    
     "001": "0", 
     "010": "0", 
     "011": "0",
@@ -63,6 +67,8 @@ Store_reg = {
     "101": "0",
     "110": "0",
     "111": "0000000000000000"}
+    
+# this function provides input in a form of list.
 
 def input():
     for line in stdin:
@@ -71,8 +77,9 @@ def input():
         a.append(line_strip)
       
             
+#returns optype and line 
 
-def counterline(number): #returns optype and line 
+def counterline(number):  
     optype=None
     line=a[number]
     temp=line[0:5]  
@@ -85,7 +92,7 @@ def counterline(number): #returns optype and line
 
 
 
-
+# This function checks for the jump statments and updates the registers accordingly.
 
 def exeengine(type,line):
     jumps= 0
@@ -113,9 +120,9 @@ def exeengine(type,line):
             return change
         
         elif opcode=="00001":   #sub
-            k1=line[10:13]  	#reg 2
-            k2=line[13:16]      #reg 3
-            k3=line[7:10]       #reg 1
+            k1=line[10:13]  	
+            k2=line[13:16]      
+            k3=line[7:10]       
             
             b=int(Store_reg[k1])
             c=int(Store_reg[k2])
@@ -130,7 +137,7 @@ def exeengine(type,line):
                 Store_reg["111"]="0000000000000000"
             return change
 
-        elif opcode=="00110":    #mul   >>  <<  
+        elif opcode=="00110":    #mul     
             k1=line[10:13]
             k2=line[13:16]
             k3=line[7:10]
@@ -148,7 +155,7 @@ def exeengine(type,line):
                 Store_reg["111"]="0000000000000000"
             return change
 
-        elif opcode=="01010": 
+        elif opcode=="01010":    #Exclusive OR
             k1=line[10:13]
             k2=line[13:16]
             k3=line[7:10]
@@ -159,7 +166,7 @@ def exeengine(type,line):
             Store_reg["111"]="0000000000000000"
             return change
 
-        elif opcode=="01011":
+        elif opcode=="01011":   #Or
             k1=line[10:13]
             k2=line[13:16]
             k3=line[7:10]
@@ -170,7 +177,7 @@ def exeengine(type,line):
             Store_reg["111"]="0000000000000000"
             return change
 
-        elif opcode=="01100":
+        elif opcode=="01100":   #And
             k1=line[10:13]
             k2=line[13:16]
             k3=line[7:10]
@@ -183,7 +190,7 @@ def exeengine(type,line):
 
     elif type=="B":
         opcode=line[0:5]
-        if opcode=="00010":
+        if opcode=="00010":     #Move Immediate
             k1=line[5:8]
             k2=line[8:]
             a=int(k2,2)
@@ -191,14 +198,14 @@ def exeengine(type,line):
             Store_reg["111"]="0000000000000000"
             return change
         
-        if opcode=="01000":
+        if opcode=="01000":    #Right Shift
             k1=line[5:8]
             i=int(str(line[8:]),2)
             Store_reg[k1]=int(int(Store_reg[k1])>>i)
             Store_reg["111"]="0000000000000000"
             return change
 
-        if opcode=="01001":
+        if opcode=="01001":     #Left Shift
             k1=line[5:8]
             i=int(str(line[8:]),2)
             Store_reg[k1]=int(int(Store_reg[k1])<<i)
@@ -209,7 +216,7 @@ def exeengine(type,line):
 
     elif type=="C":
         opcode=line[0:5]
-        if opcode=="00011":
+        if opcode=="00011":     #Move Register
             k1=line[13:16]
             k2=line[10:13]
             a=int(Store_reg[k1])
@@ -217,7 +224,7 @@ def exeengine(type,line):
             Store_reg["111"]="0000000000000000"
             return change
         
-        elif opcode=="00111":
+        elif opcode=="00111":   #Divide
             k1=line[13:16]
             k2=line[10:13]
             a=int(Store_reg[k2])
@@ -229,7 +236,7 @@ def exeengine(type,line):
             Store_reg["111"]="0000000000000000"
             return change
 
-        elif opcode=="01101":
+        elif opcode=="01101":   #Invert
             k1=line[13:16]
             k2=line[10:13]
             a=int(Store_reg[k1])
@@ -255,14 +262,14 @@ def exeengine(type,line):
 
     elif type=="D":
         opcode=line[0:5]
-        if opcode=="00101":
+        if opcode=="00101":     #Store
             k1=line[5:8]
             a=int(Store_reg[k1])
             dict_var[line[8:16]] = a
             Store_reg["111"]="0000000000000000"
             return change
         
-        elif opcode=="00100":
+        elif opcode=="00100":          #Load
             k1=line[5:8]
             Store_reg[k1]=dict_var[line[8:16]]
             Store_reg["111"]="0000000000000000"
@@ -272,27 +279,27 @@ def exeengine(type,line):
     
     elif type=="E":
         opcode=line[0:5]
-        if(opcode=="01111"):
+        if(opcode=="01111"):    #Unconditional Jump
             address=line[8:16]
             change[1]=int(address,2)-len(dict_var)
             change[0]=change[0]+1
             return change
         
-        elif(opcode=="10000" and Store_reg["111"]=="0000000000000100"):
+        elif(opcode=="10000" and Store_reg["111"]=="0000000000000100"):  #Jump If Less Than
             address = line[8:16]
             change[1]=int(address,2)-len(dict_var)
             change[0]=change[0]+1
             Store_reg["111"]="0000000000000000"
             return change
 
-        elif(opcode=="10001" and Store_reg["111"]=="0000000000000010"):
+        elif(opcode=="10001" and Store_reg["111"]=="0000000000000010"):  #Jump If Greater Than
             address = line[8:16]
             change[1]=int(address,2)-len(dict_var)
             change[0]=change[0]+1
             Store_reg["111"]="0000000000000000"
             return change
 
-        elif(opcode=="10010" and Store_reg["111"]=="0000000000000001"):
+        elif(opcode=="10010" and Store_reg["111"]=="0000000000000001"):  #Jump If Equal
             address = line[8:16]
             change[1]=int(address,2)-len(dict_var)
             change[0]=change[0]+1
@@ -303,11 +310,12 @@ def exeengine(type,line):
             Store_reg["111"]="0000000000000000"
             return change
     
-    elif type=="F":
+    elif type=="F":             # halt
         main.hlted=True
         Store_reg["111"]="0000000000000000"
         return change
 
+# This function takes one arugment i.e program counter and provides with binary representation of registers.
 
 def registers(number):
     a1='{0:08b}'.format(number)
@@ -321,11 +329,7 @@ def registers(number):
     a9=Store_reg["111"]
     print(a1,a2,a3,a4,a5,a6,a7,a8,a9)
 
-    
-
-
-
-
+# This function takes one argument and provides with the output of memory.     
 
 
 def mem_dump(pc):      
@@ -348,7 +352,7 @@ def mem_dump(pc):
             pc=change[1]
 
 
-            #variables dumping
+     #variables dumping
     if len(dict_var)>0:
         for i,j in dict_var.items():
             ktemp='{0:016b}'.format(j)
@@ -356,12 +360,14 @@ def mem_dump(pc):
 
     for i in range(0, 256-k-len(dict_var)): 
         print("0000000000000000")
+        
+# This function is main function whic helps to connect all other functions.
 
 def main():
     input()
     
-    pc=0
-    cycle=0
+    pc=0                #initalize program counter
+    cycle=0             #initalize cycle
     xcoordinates=[]
     ycoordinates=[]
     main.hlted=False 
@@ -373,7 +379,7 @@ def main():
         ycoordinates.append(pc)
         registers(pc)
         if temp2[0]==0:                 # jump=1, address=mem_add
-            pc=pc+1                 #
+            pc=pc+1                     # increment in program counter
         else:
             pc=temp2[1]
         
