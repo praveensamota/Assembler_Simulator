@@ -1,5 +1,8 @@
 #!/bin/bash
 from sys import stdin
+import matplotlib.pyplot as plt
+
+
 a=[]
 
 
@@ -98,19 +101,33 @@ def exeengine(type,line):
             b=int(Store_reg[k1])
             c=int(Store_reg[k2])
             a=str(b+c)
-            Store_reg[k3]=a
-            Store_reg["111"]="0000000000000000"
+            if int(a)>65535:
+                a1='{0:016b}'.format(int(a))
+                k=a1[(len(a1)-16):len(a1)]
+                q=int(k,2) 
+                Store_reg[k3]=q
+                Store_reg["111"]="0000000000001000"
+            else:
+                Store_reg[k3]=a
+                Store_reg["111"]="0000000000000000"
             return change
         
         elif opcode=="00001":   #sub
-            k1=line[10:13]
-            k2=line[13:16]
-            k3=line[7:10]
+            k1=line[10:13]  	#reg 2
+            k2=line[13:16]      #reg 3
+            k3=line[7:10]       #reg 1
+            
             b=int(Store_reg[k1])
             c=int(Store_reg[k2])
-            a=str(b-c)
-            Store_reg[k3]=a
-            Store_reg["111"]="0000000000000000"
+            if b-c<0:        
+                Store_reg[k3]="0"
+                Store_reg["111"]="0000000000001000"
+
+            else:
+
+                a=str(b-c)
+                Store_reg[k3]=a
+                Store_reg["111"]="0000000000000000"
             return change
 
         elif opcode=="00110":    #mul   >>  <<  
@@ -120,8 +137,15 @@ def exeengine(type,line):
             b=int(Store_reg[k1])
             c=int(Store_reg[k2])
             a=str(b*c)
-            Store_reg[k3]=a
-            Store_reg["111"]="0000000000000000"
+            if int(a)>65535:
+                a1='{0:016b}'.format(int(a))
+                k=a1[(len(a1)-16):len(a1)]
+                q=int(k,2) 
+                Store_reg[k3]=q
+                Store_reg["111"]="0000000000001000"
+            else:
+                Store_reg[k3]=a
+                Store_reg["111"]="0000000000000000"
             return change
 
         elif opcode=="01010": 
@@ -170,14 +194,14 @@ def exeengine(type,line):
         if opcode=="01000":
             k1=line[5:8]
             i=int(str(line[8:]),2)
-            Store_reg[k1]=int(Store_reg[k1]>>i)
+            Store_reg[k1]=int(int(Store_reg[k1])>>i)
             Store_reg["111"]="0000000000000000"
             return change
 
         if opcode=="01001":
             k1=line[5:8]
             i=int(str(line[8:]),2)
-            Store_reg[k1]=int(Store_reg[k1]<<i)
+            Store_reg[k1]=int(int(Store_reg[k1])<<i)
             Store_reg["111"]="0000000000000000"
             return change
 
@@ -307,9 +331,10 @@ def registers(number):
 def mem_dump(pc):      
     k=int(pc)
     pc=0
-    main.hlted=False
+    main.hlted=False   
     while(k>pc):
         type, linenum=counterline(pc)
+        
         jumps=0
         address=""
         change=[jumps,address]
@@ -336,24 +361,40 @@ def main():
     input()
     
     pc=0
+    cycle=0
+    xcoordinates=[]
+    ycoordinates=[]
     main.hlted=False 
     while(not main.hlted):
         
         type, linenum=counterline(pc)    #linenum here is line
-        temp2=exeengine(type, linenum)   #change list
+        temp2=exeengine(type, linenum) 
+        xcoordinates.append(cycle)
+        ycoordinates.append(pc)
         registers(pc)
         if temp2[0]==0:                 # jump=1, address=mem_add
             pc=pc+1                 #
         else:
             pc=temp2[1]
+        
+        cycle+=1
 
     mem_dump(pc)
+    plt.plot(xcoordinates,ycoordinates)
+    plt.xlabel("Cycle Number")
+    plt.ylabel("Memory Address")
+    plt.title("Memory Address Trace")
+    plt.show()
+    plt.savefig("graph.png")
 
 
 
 
 if __name__ == "__main__":
     main()
+
+
+
 
 
 
